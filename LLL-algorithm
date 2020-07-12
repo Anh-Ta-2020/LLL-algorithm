@@ -1,0 +1,55 @@
+def gram_schmidt_orth(B):
+    m = B.nrows()
+    n = B.ncols()
+    M = matrix(RR, m, n)
+    mu = matrix(RR, m, n)
+    M.set_column(0, B.column(0))
+    for i in range (0,n):
+        for j in range(i,n):
+            if i==j:
+                mu[i,j] = 1
+            else:
+                mu[i,j]=0
+    for i in  range(1, n):
+        M.set_column(i, B.column(i))
+        for j in range(0,i):
+            mu[i,j] = B.column(i).dot_product(M.column(j))/M.column(j).dot_product(M.column(j))
+            M.set_column(i, M.column(i) - mu[i,j]*M.column(j))
+    return (M,mu)
+def check_reduced(B):
+    m = B.nrows()
+    n = B.ncols()
+    (M,mu) = gram_schmidt_orth(B)
+    for i in  range(0, n):
+        for j in range(0,i):
+            if mu[i,j]**2 > 1/4:
+                return 0
+    for i in  range(0, n-1):
+        j = i+1
+        if (M.column(j).dot_product(M.column(j))/M.column(i).dot_product(M.column(i)))< (3/4 - (mu[j,i])**2):
+            return 0
+    return 1
+def lll(B):
+    m = B.nrows()
+    n = B.ncols()
+    M = matrix(RR, m, n)
+    mu = matrix(RR, m, n)
+    (M,mu) = gram_schmidt_orth(B)
+    k = 1
+    while (k < n):
+        j = k-1
+        while (j >= 0):
+            B.set_column(k, B.column(k) - round(mu[k,j])*B.column(j))
+            (M,mu) = gram_schmidt_orth(B)
+            j = j-1
+        if (M.column(k).norm()**2 >= (3/4 - mu[k,k-1]**2)*M.column(k-1).norm()**2 ):
+            k = k+1
+        else:
+            B.swap_columns(k,k-1)
+            (M,mu) = gram_schmidt_orth(B)
+            k = max(1,k-1)
+    return B
+B = matrix(ZZ,2,2,[2005,1,2006,1])
+print B
+print ('***')
+print lll(B)
