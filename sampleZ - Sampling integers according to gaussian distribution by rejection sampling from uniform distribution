@@ -1,0 +1,22 @@
+import numpy
+import time 
+#input
+start = time.time()
+s = 10
+c = 0
+tn = 10 #=log(n,2)
+
+def g(x):
+    return exp((- pi*x^2)/100)
+number_of_samples = 10000
+x = numpy.random.uniform(c - s*tn,c + s*tn, number_of_samples)
+u = numpy.random.uniform(0, 1, number_of_samples)
+
+rejection_sampling = []
+
+for i in range(number_of_samples):
+    if g(x[i])> u[i]:
+        rejection_sampling.append(x[i])
+end = time.time()
+print(len(rejection_sampling), end-start)
+histogram(rejection_sampling)
